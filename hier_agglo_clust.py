@@ -33,12 +33,15 @@ def flatten(data_list):
 	return lst
     
                      
-def fclusters(n, clusters):
-    #associated any label to a list of int which each element represents the 
-    #position of the label. So no need to add in argument labels
-    m = len(clusters)
-    #n = len(labels)
-    indx = np.zeros(n)
+def fclusters(labels, clusters):
+	"""
+	find the cluster for which the label belongs to.
+	Here labels are mapped to integers from 0 to lenght of the lables
+	
+	"""
+	m = len(clusters)
+	n = len(labels)
+	indx = np.zeros(n)
     for i in range(m):
         tmp_data = []
         tmp_data.append(clusters[i])
