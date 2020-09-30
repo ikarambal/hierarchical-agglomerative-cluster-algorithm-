@@ -3,30 +3,39 @@ import numpy as np
 from scipy.linalg import norm
 
 
-def flatten(data_list):
+def flatten(data_list, list_element_type=int):
 	"""
-	flatten a list containg lists
-	Input : list containing list [[1,2],3,[4,5]]
-	Return: 
-		a flattened list
-		[1,2,3,4,5]
+	flatten a list containg inner lists
+	Input
+	=====
+				data_list : list containing inner list
+				list_element_type : element dtype in the (inner) list
+	Return
+	======
+				a flattened list
+	>>> lst = [ [0, [3,4],[5,6,7]], 1, [2,9]]
+	>>> print (flatten(lst))
+	>>> [0,3,4,5,6,7,1,2,9]
 	"""
 
 	lst = []
 	#check if the list contains inner lists. If not then return the original list
-	if all([isinstance(elt, int) for elt in data_list])== True:
+	if all([isinstance(elt, ist_element_type) for elt in data_list])== True:
 		return data_list
 	else:
 		for elt in data_list:
-			if isinstance(elt, int) == True:
+			#append to the list if elt not a list (int, float)
+			if isinstance(elt, ist_element_type) == True:
 				lst.append(elt)
 			else:
-				#loop over the inner list
-				tmp_list = elt
-				for inner_elt in tmp_list:
-					if isinstance(inner_elt, int) == True:
+				#loop through the inner list
+				inner_list = elt
+				for inner_elt in inner_list:
+					#append to the list if inner elt not a list
+					if isinstance(inner_elt, ist_element_type) == True:
 						lst.append(inner_elt)
 					else:
+						#loop through the inner inner list and append its element to the lst
 						for inner_inner_elt in inner_elt:
 							lst.append(inner_inner_elt)
     			
@@ -35,19 +44,21 @@ def flatten(data_list):
                      
 def fclusters(labels, clusters):
 	"""
-	find the cluster for which the label belongs to.
-	Here labels are mapped to integers from 0 to lenght of the lables
+	Return the cluster for which the label belongs to.
+	Here labels are mapped to integers from 0 to lenght of the labels
 	
 	"""
 	m = len(clusters)
 	n = len(labels)
-	indx = np.zeros(n)
-    for i in range(m):
-        tmp_data = []
-        tmp_data.append(clusters[i])
-        clusters_i = flatten(tmp_data)
-        indx[clusters_i] = i+1
-    return indx
+	if m>n:
+		raise ValueError("ValueError exception thrown")
+	label_indices = np.zeros(n)
+	for i in range(m):
+		tmp_data = []
+		tmp_data.append(clusters[i])
+		clusters_i = flatten(tmp_data)
+		label_indices[clusters_i] = i+1
+	return label_indices
 
 def hac(data, labels, kclusters):
 	'''This is an O(n^2) hierarchical agglomerative cluster algorithm using single-linkage, i.e the minimum distance between elements in the clusters.
