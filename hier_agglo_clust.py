@@ -62,11 +62,13 @@ def fclusters(labels, clusters):
 	n = len(labels)
 	if m>n:
 		raise ValueError("cluster length can not be greater than label lenght")
+	
+	dct = dict(zip(labels, range(n)))
 	label_indices = np.zeros(n)
 	for i in range(m):
 		tmp_data = []
 		tmp_data.append(clusters[i])
-		clusters_i = flatten(tmp_data)
+		clusters_i = [dct[label] for label in flatten(tmp_data, list_element_type=str)]
 		label_indices[clusters_i] = i+1
 	return label_indices
 
@@ -102,7 +104,6 @@ def hac(data, labels, kclusters):
 		data = reduced
 		#merging clusters as one clusters and delete one of them.
 		labels[indx1] = [labels[indx1]] + [labels[indx2]]
-		#print indx1, indx2				#(labels[indx1],) + (labels[indx2],)
 		del labels[indx2]
 		
 	return labels
@@ -116,13 +117,16 @@ if __name__=='__main__':
 		[412, 268, 564, 219,   0, 669],
 		[996, 400, 138, 869, 669,   0]]
 	mat_dist = np.array(ItalyDistances)
-	#labels = ['BA','FI','MI','NA','RM','TO']
-	labels = list(range(6))
+	labels = ['BA','FI','MI','NA','RM','TO']
+	mapped_labels = list(range(6))
 	kclusters = 3
 	oldlabels = np.copy(labels)
 	clusters = hac(mat_dist, labels, kclusters)
 	print ('hierarchical agglomerative clustering', clusters)
-	print ('find clusters', fclusters(, clusters))
+	print ('labels', oldlabels, 'corresponding clusters', fclusters(oldlabels, clusters))
+	#print ('labels', oldlabels)
+	x = [['BA', ['NA','RM']],'FI',['MI','TO']]
+	print(flatten(x, str))
 	
 	
 
