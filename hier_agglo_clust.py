@@ -9,13 +9,16 @@ def flatten(data_list, list_element_type=int):
 	Input
 	=====
 				data_list : list containing inner list
-				list_element_type : element dtype in the (inner) list
+				list_element_type : element dtype in the (inner) list (int, float, str)
 	Return
 	======
 				a flattened list
 	>>> lst = [ [0, [3,4],[5,6,7]], 1, [2,9]]
 	>>> print (flatten(lst))
 	>>> [0,3,4,5,6,7,1,2,9]
+	>>> lst = [['BA', ['NA','RM']],'FI',['MI','TO']]
+	>>> print(flatten(lst, str))
+	>>> ['BA', 'NA', 'RM', 'FI', 'MI', 'TO']
 	"""
 
 	lst = []
@@ -46,12 +49,19 @@ def fclusters(labels, clusters):
 	"""
 	Return the cluster for which the label belongs to.
 	Here labels are mapped to integers from 0 to lenght of the labels
-	
+	Input
+	=====
+		labels : list containing labels
+		clusters : list containing clusters represented by integers
+	>>> clusters = [[0, [3, 4]], 1, [2, 5]] # [['BA', ['NA','RM']],'FI',['MI','TO']]
+	>>> labels = ['BA', 'FI', 'MI', 'NA', 'RM', 'TO']
+	>>> print(fclusters(labels, clusters))
+	>>> [1. 2. 3. 1. 1. 3.]
 	"""
 	m = len(clusters)
 	n = len(labels)
 	if m>n:
-		raise ValueError("ValueError exception thrown")
+		raise ValueError("cluster length can not be greater than label lenght")
 	label_indices = np.zeros(n)
 	for i in range(m):
 		tmp_data = []
@@ -61,15 +71,18 @@ def fclusters(labels, clusters):
 	return label_indices
 
 def hac(data, labels, kclusters):
-	'''This is an O(n^2) hierarchical agglomerative cluster algorithm using single-linkage, i.e the minimum distance between elements in the clusters.
-INPUTS:
-		data-->The distance matrix (a symmetric n by n matrxi) with positive entries
-		labels-->The initial set of clusters, i.e, it contains n clustres (each point considered as its own cluster)		
-		kclusters-->number of clusters less than n.
-OUPUT:
-		labels/clusters requested aftern kclusters iteration:of lenght kclusters
+	"""
+	This is an O(n^2) hierarchical agglomerative cluster algorithm using single-linkage, i.e the minimum distance between elements in the clusters.
+	Input
+	=====
+		data : a n by n symmetric matrix, e.g., representing distances
+		labels : The initial set of clusters, i.e, it contains n clustres (each point considered as its own cluster)		
+		kclusters : number of clusters <= n.
+	Return
+	======
+		labels/clusters obtained after kclusters iterations 
 		
-	'''
+	"""
 	while len(labels) > kclusters:
 		#find the minimum distance of two clusters
 		val = np.min( data[ np.nonzero(data) ] )
@@ -105,14 +118,11 @@ if __name__=='__main__':
 	mat_dist = np.array(ItalyDistances)
 	#labels = ['BA','FI','MI','NA','RM','TO']
 	labels = list(range(6))
-	kclusters = 3;n = 6
+	kclusters = 3
 	oldlabels = np.copy(labels)
 	clusters = hac(mat_dist, labels, kclusters)
 	print ('hierarchical agglomerative clustering', clusters)
-	print ('find clusters', fclusters(n, clusters))
-	print('labels', oldlabels)
-	x = [0, [3, 4]]
-	x1 = [[0, [3, 4]]]
-	print(flatten(x1))
+	print ('find clusters', fclusters(, clusters))
+	
 	
 
